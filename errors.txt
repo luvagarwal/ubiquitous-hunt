@@ -1,0 +1,27 @@
+mv: cannot move ‘daldj’ to ‘lite/jjajjd/’: Not a directory
+
+bash: cd: djja: No such file or directory
+
+grep: kadjj: No such file or directory
+
+ls: cannot access jja: No such file or directory
+
+cut: djaldal: No such file or directory
+
+mv: cannot stat ‘dlajda’: No such file or directory
+
+
+**THe point to remember is that if two unknown files are passed as argument then the first one is only given as error
+
+
+diff: xyz: No such file or directory
+diff: abc: No such file or directory
+
+du: cannot access ‘jdlaj’: No such file or directory
+
+$ file ajjdja
+ajjdja: ERROR: cannot open `ajjdja' (No such file or directory)
+
+head: cannot open ‘dlajda’ for reading: No such file or directory
+
+

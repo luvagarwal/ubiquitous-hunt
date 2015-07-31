@@ -1,0 +1,1 @@
+vimdiff xyz abc (as it creates the file if it doesn't exist)

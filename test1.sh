@@ -12,13 +12,34 @@ else
 fi
 }
 
-function test2(){
-  $@
+function search_dir(){
+  find ~ -iname gitrepos
+}
+
+function dirs(){
+  echo "courses coding Downloads gitrepos notes semester"
 }
 
 function cd(){
+  d=$(dirs)
+  read -a directories <<< $d
+  #echo ${directories[0]}
   original=$(original_command cd)
   $original $@
+  if [ $? -ne 0 ]
+  then
+    #echo ${directories[@]}
+    res=$(find ${directories[@]} -iname $@)
+    # res has newlines but using $res will convert newlines to space
+    # while using "$res" keeps the newline as it is.
+    read -a result <<< $res
+    if [ -z "$result" ]
+    then
+      :
+    else
+      cd ${result[0]}
+    fi
+  fi
 }
 
 function ls1(){

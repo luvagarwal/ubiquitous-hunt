@@ -1,0 +1,5 @@
+extract names inside quotations and also look at the error after that. There would be different actions if the error is "No such file and directory" and "Not a directory"
+
+extract name just before ": No such file and directory" -> this error indicates there is no such file and directory
+
+extract name before ": Not a directory" -> indicates there is a '/' appended in the name. So search for a directory with this name in other directories

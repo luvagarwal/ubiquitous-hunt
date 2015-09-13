@@ -1,1 +1,3 @@
-exclude . files from find command
+find in files according to their size (find in small dirs first)
+
+make an autocompleter for all the files

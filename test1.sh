@@ -29,7 +29,8 @@ function cd(){
   if [ $? -ne 0 ]
   then
     #echo ${directories[@]}
-    res=$(find ${directories[@]} -iname $@)
+    res=$(find ${directories[@]} -not -path '*/\.*' -iname $@)
+    # echo "find ${directories[@]} -not -path '*/\.*' -iname $@"
     # res has newlines but using $res will convert newlines to space
     # while using "$res" keeps the newline as it is.
     read -a result <<< $res

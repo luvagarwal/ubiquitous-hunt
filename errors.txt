@@ -25,5 +25,3 @@ $ file ajjdja
 ajjdja: ERROR: cannot open `ajjdja' (No such file or directory)
 
 head: cannot open ‘dlajda’ for reading: No such file or directory
-
-

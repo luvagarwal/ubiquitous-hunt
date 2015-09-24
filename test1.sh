@@ -39,9 +39,11 @@ function execute(){
         directories[i]=$HOME/${directories[i]}
     done 
     original=$(path $1)
-    err=$($original ${@:2} 2>&1)
+    $original ${@:2}
+
     if [ $? -ne 0 ]
     then
+        err=$( $original ${@:2} 2>&1 )
         res=$(find ${directories[@]} -type d -not -path '*/\.*' -name ${@:2})
         # echo "find ${directories[@]} -not -path '*/\.*' -iname $@"
         # res has newlines but using $res will convert newlines to space
@@ -55,3 +57,4 @@ function execute(){
         fi
     fi
 }
+

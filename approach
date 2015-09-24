@@ -6,4 +6,6 @@ extract name before ": Not a directory" -> indicates there is a '/' appended in 
 
 REGEX TO EXTRACT THE DIR OR FILE NAME
 -------------------------------------
-move from right to left and select the first quotation found and return. if not found then again move from right to left and select the word just before to first `:`. For file command it encloses the filename inside `'
+move from right to left and select the first quotation (‘’) found and return. if not found then again move from right to left and select the word just before to first `:`. For file command it encloses the filename inside `'
+
+Now find the file or dir with the found name and repeat the command in while loop until success

@@ -14,3 +14,8 @@ function finderrorfile(){
 
 finderrorfile 'mv: cannot move ‘daldj’ to ‘lite/jjajjd/’: Not a directory'
 finderrorfile 'bash: cd: djja: No such file or directory'
+finderrorfile 'mv: cannot stat ‘dlajda’: No such file or directory
+'
+finderrorfile 'bash: cd: mine: No such file or directory'
+
+finderrorfile ': ji: No such file or directory'

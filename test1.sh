@@ -35,18 +35,29 @@ function alias_commands(){
 
 function check_error_type(){
     # check if the error contains word
-    # "file" or "directory"
+    # "file" or "directory", "No" or "Not"
+
+    flagw1=0 # for "file" or "direcoty"
+    flagw2=0 # for "No" or "Not"
 
     error=$1
     read -a error <<< $error
-    #echo ${#error[@]}
+    
     for e in ${error[@]}
     do
-        if [ $e == "file" ]
+        if [ "$e" == "file" ] || [ "$e" == "directory" ]
         then
-            return 0
+            flagw1=1
+        fi
+        if [ "$e" == "No" ] || [ "$e" == "Not" ]
+        then
+            flagw2=1
         fi
     done
+    if [ $flagw1 -eq 1 ] && [ $flagw2 -eq 1 ]
+    then
+        return 0
+    fi
     return 1
 }
 
@@ -128,8 +139,9 @@ function execute(){
             fi
             count=$(expr $count + 1)
         done
-
-        echo "executing" $original ${@:2}
+        blue=`tput setaf 4`
+        reset=`tput sgr0`
+        echo "${blue}Executing" $original ${@:2} "${reset}"
         if [ $1 == "cd" ]
         then
             $original ${@:2}
@@ -149,3 +161,8 @@ function execute(){
         fi
     done
 }
+
+# function ls(){
+#     execute ls
+# }
+

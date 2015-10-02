@@ -6,7 +6,9 @@ function finderrorfile(){
         IFS=':' read -a arr <<< $1
         read -a $arr <<< $arr
         length=${#arr[@]}
-        echo ${arr[length-2]}
+        arr=${arr[length-2]}
+        read -a arr <<< $arr
+        echo ${arr[${#arr[@]}-1]}
     else
         echo ${arr[0]}
     fi
@@ -29,7 +31,7 @@ function dirs(){
 }
 
 function alias_commands(){
-    # echo "ls mv cd diff cmp"
+    #echo "ls mv cd diff cmp"
     echo "cd"
 }
 
@@ -48,6 +50,7 @@ function check_error_type(){
         if [ "$e" == "file" ] || [ "$e" == "directory" ]
         then
             flagw1=1
+            ftype="${e:0:1}" # first character
         fi
         if [ "$e" == "No" ] || [ "$e" == "Not" ]
         then
@@ -56,16 +59,14 @@ function check_error_type(){
     done
     if [ $flagw1 -eq 1 ] && [ $flagw2 -eq 1 ]
     then
-        return 0
+        echo "$ftype"
     fi
-    return 1
 }
 
 function create_alias(){
 
     commands=$(alias_commands)
     read -a commands <<< $commands
-    alias ls="execute ls"
     for command in ${commands[@]}
     do
         alias $command="execute $command"
@@ -75,34 +76,34 @@ function create_alias(){
 create_alias
 
 function execute(){
+    blue=`tput setaf 4`
+    reset=`tput sgr0`
+
     original=$(path $1)
 
-    # redirecting error to output doesn't
-    # execute cd command. So need to handle
-    # separately. Haven't tested if this is the
-    # case with all builtin commands
+    # deal with changing directory separately as
+    # each subshell has there own current diretory
+    # and if it is run inside $() the current dir
+    # will change as soon as it comes out of $()
     if [ $1 == "cd" ]
     then
         $original ${@:2}
-        if [ $? -eq 0 ]
-        then
-            return 0
-        fi
+        if [ $? -eq 0 ]; then return 0; fi
     fi
 
-    err=$( $original ${@:2} 2>&1 )
-    status=$?
+    # store stderr and output stdout by swapping
+    # the file descriptors of stdin and stdout
+    err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
 
-    check_error_type "$err"
-    if [ $? -ne 0 ]
+    status=$?
+    if [ $status -eq 0 ]; then return 0; fi
+
+    ftype=$(check_error_type "$err")
+
+    if [ -z $ftype ]
     then
         echo "$err"
         return 1
-    fi
-
-    if [ $status -eq 0 ]
-    then
-        return 0
     fi
 
     d=$(dirs)
@@ -114,15 +115,19 @@ function execute(){
 
     while [ $status -ne 0 ]
     do
-        errfile=$(finderrorfile "$err" 2>/dev/null)
-        errfile_path=$(find ${directories[@]} -not -path '*/\.*' -name $errfile)
+        errfile_orig=$(finderrorfile "$err" 2>/dev/null)
+
+        # extract the name after last '/'. Ex for
+        # errfile='pqrs/ab' extract ab
+        IFS='/' read -a errfile <<< $errfile_orig
+        errfile=${errfile[${#errfile[@]}-1]}
+        errfile_path=$(find ${directories[@]} -not -path '*/\.*' -type $ftype -name $errfile)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 
-        # echo $errfile_path
         if [ -z $errfile_path ]
         then
-            echo "Nahi hai!"
+            echo "${blue}-_-${reset}"
             break
         fi
 
@@ -131,7 +136,7 @@ function execute(){
 
         for i in ${@:2}
         do
-            if [ $i == $errfile ]
+            if [ $i == $errfile_orig ]
             then
                 set -- "${@:1:$count}" "$errfile_path" "${@:$(expr $count + 2)}"
                 break
@@ -139,8 +144,6 @@ function execute(){
             fi
             count=$(expr $count + 1)
         done
-        blue=`tput setaf 4`
-        reset=`tput sgr0`
         echo "${blue}Executing" $original ${@:2} "${reset}"
         if [ $1 == "cd" ]
         then
@@ -150,7 +153,7 @@ function execute(){
                 return 0
             fi
         fi
-        err=$( $original ${@:2} 2>&1 )
+        err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
         status=$?
 
         check_error_type "$err"
@@ -162,7 +165,4 @@ function execute(){
     done
 }
 
-# function ls(){
-#     execute ls
-# }
-
+# execute cd mine

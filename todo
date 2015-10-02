@@ -1,3 +1,6 @@
+I give preference to ftype="d" (the $err string always contains directory word after file word. So ftype is set to 'd'). But this may not what you want. 
+
+for commands whose alias already exists my script overwrites them if it is sourced before those commands else they overwrite this file commands
+
 find in files according to their size (find in small dirs first)
 
-make an autocompleter for all the files

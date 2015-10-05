@@ -1,5 +1,12 @@
 I give preference to ftype="d" (the $err string always contains directory word after file word. So ftype is set to 'd'). But this may not what you want. 
 
+giving unnecessary new lines. Ex.
+$ cmp r1 f2
+Executing /usr/bin/cmp /home/luv/testing/r1 f2 
+Executing /usr/bin/cmp /home/luv/testing/r1 /home/luv/testing/d2/f2 
+/home/luv/testing/r1 /home/luv/testing/d2/f2 differ: byte 4, line 1
+NEWLINE
+
 for commands whose alias already exists my script overwrites them if it is sourced before those commands else they overwrite this file commands
 
 find in files according to their size (find in small dirs first)

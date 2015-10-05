@@ -1,40 +1,32 @@
-  basename Strip directory and suffix from filenames
+  bzip2    Compress or decompress named file(s) *
 
-  bzip2    Compress or decompress named file(s)
+  cat      Concatenate and print (display) the content of files *
 
-  cat      Concatenate and print (display) the content of files
+  cd       Change Directory *
 
-  cd       Change Directory
-
-  chown    Change file owner and group
+  chown    Change file owner and group *
 
   chroot   Run a command with a different root directory
 
-  cmp      Compare two files
+  cmp      Compare two files *
 
-  comm     Compare two sorted files line by line
+  comm     Compare two sorted files line by line *
 
-  cp       Copy one or more files to another location
+  cp       Copy one or more files to another location *
 
   csplit   Split a file into context-determined pieces
 
-  cut      Divide a file into several parts
+  cut      Divide a file into several parts *
 
   dd       Convert and copy a file, write disk headers, boot records
 
-  diff     Display the differences between two files
+  diff     Display the differences between two files *
 
-  diff3    Show differences among three files
+  diff3    Show differences among three files *
 
-  dir      Briefly list directory contents
+  dir      Briefly list directory contents *
 
-  dircolors Colour setup for `ls'
-
-  dirname  Convert a full pathname to just a path
-
-  dirs     Display list of remembered directories
-
-  du       Estimate file space usage
+  du       Estimate file space usage *
 
   egrep    Search file(s) for lines that match an extended expression
 
@@ -106,8 +98,6 @@
 
   pushd    Save and then change the current directory
 
-  pwd      Print Working Directory
-
   quotacheck Scan a file system for disk usage
 
   rar      Archive files with compression
@@ -152,8 +142,6 @@
 
   touch    Change file timestamps
 
-  tty      Print filename of terminal on stdin
-
   umask    Users file creation mask
 
   uniq     Uniquify files
@@ -164,15 +152,7 @@
 
   uudecode Decode a file created by uuencode
 
-  v        Verbosely list directory contents (`ls -l -b')
-
-  vdir     Verbosely list directory contents (`ls -l -b')
-
-  whereis  Search the user's $path, man pages and source files for a program
-
-  which    Search the user's $path for a program file
-
-  wget     Retrieve web pages or files via HTTP, HTTPS or FTP
+  vdir     Verbosely list directory contents (`ls -l -b') *
 
   xdg-open Open a file or URL in the user's preferred application.
 

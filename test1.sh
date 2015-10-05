@@ -31,8 +31,8 @@ function dirs(){
 }
 
 function alias_commands(){
-    #echo "ls mv cd diff cmp"
-    echo "cd"
+    echo "stat ls dir diff diff3 du vdir v bzip2 mv cd cp comm csplit cut cmp cat chown"
+    # echo "cd"
 }
 
 function check_error_type(){
@@ -44,22 +44,23 @@ function check_error_type(){
 
     error=$1
     read -a error <<< $error
-    
+    ftype=""
     for e in ${error[@]}
     do
-        if [ "$e" == "file" ] || [ "$e" == "directory" ]
-        then
+        if [ "$e" == "file" ]; then
             flagw1=1
-            ftype="${e:0:1}" # first character
+            f="f"
         fi
-        if [ "$e" == "No" ] || [ "$e" == "Not" ]
-        then
+        if [ "$e" == "directory" ] || [ "$e" == "directory." ]; then
+            flagw1=1
+            d="d"
+        fi
+        if [ "$e" == "No" ] || [ "$e" == "Not" ]; then
             flagw2=1
         fi
     done
-    if [ $flagw1 -eq 1 ] && [ $flagw2 -eq 1 ]
-    then
-        echo "$ftype"
+    if [ $flagw1 -eq 1 ] && [ $flagw2 -eq 1 ]; then
+        echo "$f$d"
     fi
 }
 
@@ -81,31 +82,6 @@ function execute(){
 
     original=$(path $1)
 
-    # deal with changing directory separately as
-    # each subshell has there own current diretory
-    # and if it is run inside $() the current dir
-    # will change as soon as it comes out of $()
-    if [ $1 == "cd" ]
-    then
-        $original ${@:2}
-        if [ $? -eq 0 ]; then return 0; fi
-    fi
-
-    # store stderr and output stdout by swapping
-    # the file descriptors of stdin and stdout
-    err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
-
-    status=$?
-    if [ $status -eq 0 ]; then return 0; fi
-
-    ftype=$(check_error_type "$err")
-
-    if [ -z $ftype ]
-    then
-        echo "$err"
-        return 1
-    fi
-
     d=$(dirs)
     read -a directories <<< $d
     for i in `seq 0 $(expr ${#directories[@]} - 1)`
@@ -113,20 +89,48 @@ function execute(){
         directories[i]=$HOME/${directories[i]}
     done
 
+    status=1
     while [ $status -ne 0 ]
     do
-        errfile_orig=$(finderrorfile "$err" 2>/dev/null)
+        # deal with changing directory separately as
+        # each subshell has there own current diretory
+        # and if it is run inside $() the current dir
+        # will change as soon as it comes out of $()
+        if [ $1 == "cd" ]
+        then
+            $original ${@:2} 2>/dev/null
+            if [ $? -eq 0 ]; then return 0; fi
+        fi
 
+        # store stderr and output stdout by swapping
+        # the file descriptors of stdin and stdout
+        err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
+        status=$?
+        if [ $status -eq 0 ]; then return 0; fi
+
+        ftype=$(check_error_type "$err")
+        if [ -z $ftype ]; then
+            echo "$err"
+            return 1
+        fi
+
+        errfile_orig=$(finderrorfile "$err" 2>/dev/null)
         # extract the name after last '/'. Ex for
         # errfile='pqrs/ab' extract ab
         IFS='/' read -a errfile <<< $errfile_orig
         errfile=${errfile[${#errfile[@]}-1]}
-        errfile_path=$(find ${directories[@]} -not -path '*/\.*' -type $ftype -name $errfile)
+
+        if [ "$ftype" == "fd" ]; then
+            p=""
+        else
+            p="-type $ftype"
+        fi
+
+        errfile_path=$(find ${directories[@]} -not -path '*/\.*' $p -name $errfile)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 
-        if [ -z $errfile_path ]
-        then
+        if [ -z $errfile_path ]; then
             echo "${blue}-_-${reset}"
             break
         fi
@@ -134,10 +138,8 @@ function execute(){
         count=1
         flag=1
 
-        for i in ${@:2}
-        do
-            if [ $i == $errfile_orig ]
-            then
+        for i in ${@:2}; do
+            if [ $i == $errfile_orig ]; then
                 set -- "${@:1:$count}" "$errfile_path" "${@:$(expr $count + 2)}"
                 break
                 flag=0
@@ -145,24 +147,5 @@ function execute(){
             count=$(expr $count + 1)
         done
         echo "${blue}Executing" $original ${@:2} "${reset}"
-        if [ $1 == "cd" ]
-        then
-            $original ${@:2}
-            if [ $? -eq 0 ]
-            then
-                return 0
-            fi
-        fi
-        err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
-        status=$?
-
-        check_error_type "$err"
-        if [ $? -ne 0 ]
-        then
-            echo $err
-            return 1
-        fi
     done
 }
-
-# execute cd mine

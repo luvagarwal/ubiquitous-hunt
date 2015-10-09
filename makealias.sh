@@ -126,7 +126,7 @@ function execute(){
             p="-type $ftype"
         fi
 
-        errfile_path=$(find ${directories[@]} -not -path '*/\.*' $p -name $errfile)
+        errfile_path=$(find ${directories[@]} -not -path '*/\.*' $p -iname *$errfile*)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 

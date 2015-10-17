@@ -26,7 +26,7 @@ function path(){
 }
 
 function dirs(){
-    echo "courses coding gitrepos notes semester testing"
+    echo "Downloads courses coding gitrepos notes semester testing"
     # echo "testing testing2"
 }
 
@@ -126,12 +126,12 @@ function execute(){
             p="-type $ftype"
         fi
 
-        errfile_path=$(find ${directories[@]} -not -path '*/\.*' $p -iname *$errfile*)
+        errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile*)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 
         if [ -z $errfile_path ]; then
-            echo "${blue}-_-${reset}"
+            echo "${blue}Ubiquitous Hunt unsuccessful${reset}"
             break
         fi
 

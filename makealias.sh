@@ -77,6 +77,7 @@ function create_alias(){
 create_alias
 
 function execute(){
+    orange=`tput setaf 3`
     blue=`tput setaf 4`
     reset=`tput sgr0`
 
@@ -131,7 +132,7 @@ function execute(){
         errfile_path=${errfile_path[0]}
 
         if [ -z $errfile_path ]; then
-            echo "${blue}Ubiquitous Hunt unsuccessful${reset}"
+            echo "${orange}Hunt unsuccessful${reset}"
             break
         fi
 

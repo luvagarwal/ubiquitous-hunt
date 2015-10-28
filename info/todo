@@ -1,5 +1,7 @@
 I give preference to ftype="d" (the $err string always contains directory word after file word. So ftype is set to 'd'). But this may not what you want. 
 
+problem finding directories having space in them - read the arguments in execute function and escape spaces in them
+
 giving unnecessary new lines. Ex.
 $ cmp r1 f2
 Executing /usr/bin/cmp /home/luv/testing/r1 f2 

@@ -26,7 +26,7 @@ function path(){
 }
 
 function dirs(){
-    echo "Downloads courses coding gitrepos notes semester testing"
+    echo "Downloads courses coding gitrepos notes semester"
     # echo "testing testing2"
 }
 
@@ -76,6 +76,37 @@ function create_alias(){
 
 create_alias
 
+function save_visited(){
+    visited="~/.ubiquitous-hunt/visited-direcotires"
+    visited_freq="~/.ubiquitous-hunt/visited-direcotires-freq"
+    pwdir=$(pwd)
+    res=$(grep visited -rn -e r"*$pwdir$")
+    
+    if [ -z $res ]; then
+        echo $pwdir >> visited
+        echo "1" >> visited_freq
+    else
+        IFS=":" read -a res <<< "$res"
+        lno=${res[0]}
+        origlno=$lno
+        freq=$(head -$lno visited_freq | tail -1)
+        freq=$(expr $freq + 1)
+        while [ $lno -ne 0 ]; do
+            lno=$(expr $lno - 1)
+            f=$(head -$lno visited_freq | tail -1)
+            if [ $f -gt $freq ]; then break
+                lastmatch=$lno
+            fi
+        done
+        sed -i "$origlno d" visited_freq
+        sed -i "$lno i $freq" visited_freq
+        sed -i "$origlno d" visited
+        sed -i "$lno i ${res[1]}" visited_freq
+    fi
+
+
+}
+
 function execute(){
     orange=`tput setaf 3`
     blue=`tput setaf 4`
@@ -90,6 +121,14 @@ function execute(){
         directories[i]=$HOME/${directories[i]}
     done
 
+    # escape all the white space characters in the arguments
+    # count=1
+    # for i in "${@:2}"; do
+    #     newval=$(printf "%q" "$i")
+    #     set -- "${@:1:$count}" "$newval" "${@:$(expr $count + 2)}"
+    #     count=$(expr $count + 1)
+    # done
+
     status=1
     while [ $status -ne 0 ]
     do
@@ -99,13 +138,15 @@ function execute(){
         # will change as soon as it comes out of $()
         if [ $1 == "cd" ]
         then
-            $original ${@:2} 2>/dev/null
-            if [ $? -eq 0 ]; then return 0; fi
+            $original "${@:2}" 2>/dev/null
+            if [ $? -eq 0 ]; then
+                return 0;
+            fi
         fi
 
         # store stderr and output stdout by swapping
         # the file descriptors of stdin and stdout
-        err=$( $original ${@:2} 3>&2 2>&1 1>&3- )
+        err=$( $original "${@:2}" 3>&2 2>&1 1>&3- )
         status=$?
         if [ $status -eq 0 ]; then return 0; fi
 
@@ -127,7 +168,7 @@ function execute(){
             p="-type $ftype"
         fi
 
-        errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile*)
+        errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile* -print -quit)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 

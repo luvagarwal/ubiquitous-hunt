@@ -31,8 +31,8 @@ function dirs(){
 }
 
 function alias_commands(){
-    #echo "stat ls dir diff diff3 du vdir v bzip2 mv cd cp comm csplit cut cmp cat chown"
-    echo "cd"
+    echo "stat ls dir diff diff3 du vdir v bzip2 mv cd cp comm csplit cut cmp cat chown"
+    # echo "cd"
 }
 
 function check_error_type(){
@@ -168,9 +168,7 @@ function execute(){
             p="-type $ftype"
         fi
 
-        #errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile* -print -quit)
-        #errfile_path=$(locate -r "/$errfile[^\/]*$")
-        errfile_path=$(locate -r "/$errfile$")
+        errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile* -print -quit)
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
 

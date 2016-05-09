@@ -5,5 +5,4 @@ It may sound that this would be very slow as it has to search for the specified 
 
 1. It does not interfere in the command if it is executed successfully.
 2. It automatically prioritizes the files and directories on the basis of how you use them in your commands and let you use them later without specifying the whole path.
-3. It does not produce any noticeable change in the execution time of commands.
-4. Even there is no need to specify the complete filename. Substrings of filename will work.
+3. Even there is no need to specify the complete filename. Substrings of filename will work in most cases.

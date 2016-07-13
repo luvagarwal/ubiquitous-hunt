@@ -25,14 +25,8 @@ function path(){
     fi
 }
 
-function dirs(){
-    echo "courses coding gitrepos notes semester"
-    # echo "testing testing2"
-}
-
 function alias_commands(){
-    #echo "stat ls dir diff diff3 du vdir v bzip2 mv cd cp comm csplit cut cmp cat chown"
-    echo "cd"
+    echo "stat ls dir diff diff3 du vdir v grep bzip2 mv cd cp comm csplit cut cmp cat chown"
 }
 
 function check_error_type(){
@@ -114,13 +108,6 @@ function execute(){
 
     original=$(path $1)
 
-    d=$(dirs)
-    read -a directories <<< $d
-    for i in `seq 0 $(expr ${#directories[@]} - 1)`
-    do
-        directories[i]=$HOME/${directories[i]}
-    done
-
     # escape all the white space characters in the arguments
     # count=1
     # for i in "${@:2}"; do
@@ -155,7 +142,6 @@ function execute(){
             echo "$err"
             return 1
         fi
-
         errfile_orig=$(finderrorfile "$err" 2>/dev/null)
         # extract the name after last '/'. Ex for
         # errfile='pqrs/ab' extract ab
@@ -168,8 +154,7 @@ function execute(){
             p="-type $ftype"
         fi
 
-        #errfile_path=$(find -O3 ${directories[@]} -not -path '*/\.*' $p -iname *$errfile* -print -quit)
-        #errfile_path=$(locate -r "/$errfile[^\/]*$")
+        # errfile_path=$(locate -r "/$errfile[^\/]*$")
         errfile_path=$(locate -r "/$errfile$")
         read -a errfile_path <<< $errfile_path
         errfile_path=${errfile_path[0]}
@@ -190,6 +175,6 @@ function execute(){
             fi
             count=$(expr $count + 1)
         done
-        echo "${blue}Executing" $original ${@:2} "${reset}"
+        echo "${orange}Executing" $original ${@:2} "${reset}"
     done
 }

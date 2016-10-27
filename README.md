@@ -34,6 +34,9 @@ Executing /bin/mv /home/fnatic9910/Downloads/Ass2.tar.gz /home/fnatic9910/gitrep
 ```
 Note in second mv command `mv Ass2.tar.gz feedback/`, it failed, did path replacement for `Ass2.tar.gz`, failed, did path replacement for `feedback/`, executed successfully.
 
+## Installation
+Download this repository and source makealias.sh into your .bashrc or other startup script.
+
 ## Todos
 
 - [ ] Better handling in case of path collisions by logging recent usage of files

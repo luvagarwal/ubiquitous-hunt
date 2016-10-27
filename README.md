@@ -13,6 +13,8 @@ It works by checking for errors in command output and trying to modify the comma
 ## Sample commands
 
 Commands with single file/dir path argument (cd, ls, grep, head, tail, cat, du, stat, chown, etc)
+![single path argument](https://cloud.githubusercontent.com/assets/7158765/19782481/9ddba6dc-9cab-11e6-9108-b042d51a55ed.png)
+
 ```
 $ cd ubiquitous-hunt
 Executing builtin cd /home/fnatic9910/gitrepos/ubiquitous-hunt
@@ -23,6 +25,7 @@ $ grep feedback -rn -e "blah!"
 Executing /bin/grep /home/fnatic9910/gitrepos/feedback -rn -e blah! 
 
 ```
+![multiple path arguments](https://cloud.githubusercontent.com/assets/7158765/19782483/9fb62a86-9cab-11e6-92b4-28af7b68b961.png)
 
 Commands with multiple file/dir path arguments (mv, cp, diff, cmp, etc)
 ```

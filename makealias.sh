@@ -1,17 +1,19 @@
-function finderrorfile(){
-    fname=$(echo $1 | sed 's/.*‘//g')
-    IFS='’' read -a arr <<< $fname
+function findErrorFile(){
+    fname=$(echo $1 | sed "s/.*'//g")
+    IFS="'" read -a arr <<< $fname
     if [ ${#arr[@]} -eq 1 ]
     then
         IFS=':' read -a arr <<< $1
-        read -a $arr <<< $arr
+        # read -a arr <<< $arr
         length=${#arr[@]}
         arr=${arr[length-2]}
         read -a arr <<< $arr
-        echo ${arr[${#arr[@]}-1]}
+        errfile=${arr[${#arr[@]}-1]}
     else
-        echo ${arr[0]}
+        errfile=${arr[0]}
     fi
+    # remove quotations from 'dir/fname'
+    echo $(echo "$errfile" | sed "s/'//g")
 }
 
 function path(){
@@ -26,7 +28,7 @@ function path(){
 }
 
 function alias_commands(){
-    echo "stat ls dir diff diff3 du vdir v grep bzip2 mv cd cp comm csplit cut cmp cat chown"
+	cat "${HOME}/gitrepos/ubiquitous-hunt/commands"
 }
 
 function check_error_type(){
@@ -71,11 +73,11 @@ function create_alias(){
 create_alias
 
 function save_visited(){
-    visited="~/.ubiquitous-hunt/visited-direcotires"
-    visited_freq="~/.ubiquitous-hunt/visited-direcotires-freq"
+    visited="${HOME}/.ubiquitous-hunt/visited-direcotires"
+    visited_freq="${HOME}/.ubiquitous-hunt/visited-direcotires-freq"
     pwdir=$(pwd)
     res=$(grep visited -rn -e r"*$pwdir$")
-    
+
     if [ -z $res ]; then
         echo $pwdir >> visited
         echo "1" >> visited_freq
@@ -84,9 +86,9 @@ function save_visited(){
         lno=${res[0]}
         origlno=$lno
         freq=$(head -$lno visited_freq | tail -1)
-        freq=$(expr $freq + 1)
+        freq=$(($freq + 1))
         while [ $lno -ne 0 ]; do
-            lno=$(expr $lno - 1)
+            lno=$(($lno - 1))
             f=$(head -$lno visited_freq | tail -1)
             if [ $f -gt $freq ]; then break
                 lastmatch=$lno
@@ -97,8 +99,6 @@ function save_visited(){
         sed -i "$origlno d" visited
         sed -i "$lno i ${res[1]}" visited_freq
     fi
-
-
 }
 
 function execute(){
@@ -112,8 +112,8 @@ function execute(){
     # count=1
     # for i in "${@:2}"; do
     #     newval=$(printf "%q" "$i")
-    #     set -- "${@:1:$count}" "$newval" "${@:$(expr $count + 2)}"
-    #     count=$(expr $count + 1)
+    #     set -- "${@:1:$count}" "$newval" "${@:$(($count + 2))}"
+    #     count=$(($count + 1))
     # done
 
     status=1
@@ -137,16 +137,25 @@ function execute(){
         status=$?
         if [ $status -eq 0 ]; then return 0; fi
 
+        # echo "$err" >&2
+
         ftype=$(check_error_type "$err")
         if [ -z $ftype ]; then
             echo "$err"
             return 1
         fi
-        errfile_orig=$(finderrorfile "$err" 2>/dev/null)
-        # extract the name after last '/'. Ex for
-        # errfile='pqrs/ab' extract ab
-        IFS='/' read -a errfile <<< $errfile_orig
-        errfile=${errfile[${#errfile[@]}-1]}
+        errfile_orig=$(findErrorFile "$err" 2>/dev/null)
+        # echo "$errfile_orig" >&2
+
+        errfile="$errfile_orig"
+        # Remove last '/' if any
+        last=$((${#errfile}-1))
+        if [[ "${errfile:$last:1}" == "/" ]]; then
+        	# remove last character
+        	errfile="${errfile%?}"
+        fi
+
+        # echo "$errfile" >&2
 
         if [ "$ftype" == "fd" ]; then
             p=""
@@ -154,9 +163,12 @@ function execute(){
             p="-type $ftype"
         fi
 
-        # errfile_path=$(locate -r "/$errfile[^\/]*$")
-        errfile_path=$(locate -r "/$errfile$")
-        read -a errfile_path <<< $errfile_path
+        # locate_out=$(locate -r "/$errfile[^\/]*$")
+        locate_out=$(locate -r "/$errfile$")
+        # echo "$locate_out"
+        # errfile_path=$(locate -b '\$errfile$')
+        read -a errfile_path <<< "$locate_out"
+
         errfile_path=${errfile_path[0]}
 
         if [ -z $errfile_path ]; then
@@ -169,11 +181,11 @@ function execute(){
 
         for i in ${@:2}; do
             if [ $i == $errfile_orig ]; then
-                set -- "${@:1:$count}" "$errfile_path" "${@:$(expr $count + 2)}"
+                set -- "${@:1:$count}" "$errfile_path" "${@:$(($count + 2))}"
                 break
                 flag=0
             fi
-            count=$(expr $count + 1)
+            count=$(($count + 1))
         done
         echo "${orange}Executing" $original ${@:2} "${reset}"
     done

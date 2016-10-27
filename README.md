@@ -1,4 +1,4 @@
-# ubiquitous-hunt
+# Ubiquitous Hunt
 
 A linux shell utility which lets you pass incomplete paths in bash commands. One quick usage exmaple would be to run `cd ghi` instead of `cd abc/def/ghi` after installing ubiquitous hunt.
 

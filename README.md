@@ -1,8 +1,46 @@
-# ubiquitous-hunt
+# Ubiquitous Hunt
 
-A utility for linux shell which lets you just pass the file names and dir names and eliminate the need to provide complete path of the file or directory you want to specify in the command. It learns and prioritizes from the user's use of files and directories in the commands and use them at later stage to automatically determine the complete path of files. Suppose you have to run a command on bash in which you have to specify a file or directory (for example cd, mv, cp, du, etc) then it let you just specify the name of file or directory and would figure out the complete path itself. <br/><br/>
-It may sound that this would be very slow as it has to search for the specified filename in the whole file system, which can be extremely slow, but it works in quite a different way and does not produce any noticeable change in the execution time of commands
+A linux shell utility which lets you pass incomplete paths in bash commands. One quick usage exmaple would be to run `cd ghi` instead of `cd abc/def/ghi` after installing ubiquitous hunt.
+
+## How it works?
+It works by checking for errors in command output and trying to modify the command in order to successfully execute it.
 
 1. It does not interfere in the command if it is executed successfully.
-2. It automatically prioritizes the files and directories on the basis of how you use them in your commands and let you use them later without specifying the whole path.
-3. Even there is no need to specify the complete filename. Substrings of filename will work in most cases.
+2. In case of failure, it will identify if the reason for failure is related to incomplete path or not (by doing regex pattern matching on stderr).
+3. If the reason for failure is something else, it will exit. Else, it will replace the incomplete paths with complete paths using locate command and again run the command.
+4. It will keep on replacing until the command is successfully executed or nothing more it can do.
+
+## Sample commands
+
+Commands with single file/dir path argument (cd, ls, grep, head, tail, cat, du, stat, chown, etc)
+![single path argument](https://cloud.githubusercontent.com/assets/7158765/19782481/9ddba6dc-9cab-11e6-9108-b042d51a55ed.png)
+
+```
+$ cd ubiquitous-hunt
+Executing builtin cd /home/fnatic9910/gitrepos/ubiquitous-hunt
+~/gitrepos/ubiquitous-hunt$ cd feedback
+Executing builtin cd /home/fnatic9910/gitrepos/feedback
+~/gitrepos/feedback$ cd
+$ grep feedback -rn -e "blah!"
+Executing /bin/grep /home/fnatic9910/gitrepos/feedback -rn -e blah! 
+
+```
+![multiple path arguments](https://cloud.githubusercontent.com/assets/7158765/19782483/9fb62a86-9cab-11e6-92b4-28af7b68b961.png)
+
+Commands with multiple file/dir path arguments (mv, cp, diff, cmp, etc)
+```
+$ mv test feedback/ # Note trailing slash. Without it, command would be successfully executed if test exists
+Executing /bin/mv /home/fnatic9910/gitrepos/feedback
+$ mv Ass2.tar.gz feedback/
+Executing /bin/mv /home/fnatic9910/Downloads/Ass2.tar.gz feedback/
+Executing /bin/mv /home/fnatic9910/Downloads/Ass2.tar.gz /home/fnatic9910/gitrepos/feedback
+```
+Note in second mv command `mv Ass2.tar.gz feedback/`, it failed, did path replacement for `Ass2.tar.gz`, failed, did path replacement for `feedback/`, executed successfully.
+
+## Installation
+Download this repository and source makealias.sh into your .bashrc or other startup script.
+
+## Todos
+
+- [ ] Better handling in case of path collisions by logging recent usage of files
+- [ ] Allow incomplete file names

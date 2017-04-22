@@ -1,0 +1,3 @@
+get locate_out (maybe?) out of the loop to avoid repetitve locate querying for same input
+
+http://unix.stackexchange.com/questions/31161/quick-directory-navigation-in-the-bash-shell -> add ubiquitous-hunt here

@@ -1,9 +1,9 @@
-mv
 cd
-grep
-cmp
-stat
 ls
+grep
+mv
+stat
+cmp
 dir
 diff
 diff3
